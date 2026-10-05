@@ -12,10 +12,12 @@
 | :--- | :--- |
 | **Current Phase** | Phase 5: Verification & Production Ready [COMPLETED] |
 | **Overall Progress** | 100% Complete |
-| **Active Focus** | Real open data integration, per-graph references, and repository sync |
-| **Data Integrity** | Real Kaggle DS Salaries (607 rows), Open Job Postings (742 rows), MHESI Higher Ed (432 rows), and U.S. BLS OEWS benchmarks |
-| **Graph Citations** | Explicit data reference captions embedded under all 10 graphs and KPI summary |
-| **Test Suite** | 4/4 passing unit & smoke tests (0.81s execution) |
+| **Active Focus** | Full alignment with User Requirements (Tabs 1, 2, 3, Plotly Cross-Filtering, Real Open Data) |
+| **Question 1 (Tab 1)** | Program names, annual production volume (2020-2025), core compulsory courses, Year 1-3 employed graduates headcount, tuition fees |
+| **Question 2 (Tab 2)** | Open vacancies volume trend, top in-demand skills, hiring companies and market share, salary distribution across career tiers |
+| **Synthesis (Tab 3)** | Skill mismatch heatmap matrix, surplus vs shortage divergence, talent volume vs vacancies gap, policy recommendations |
+| **Interactivity** | Cross-filtering in every tab linking all graphs to user filter selections with reset buttons |
+| **Test Suite** | 4/4 passing unit tests |
 
 ---
 
@@ -48,11 +50,25 @@
 
 ### Phase 4: UI / UX Layout & Interactive Dashboard Implementation [COMPLETED]
 - [x] Develop `app.py` root application with executive dark mode styling.
-- [x] Embed Executive KPI Summary Cards with overall alignment index and citation.
-- [x] Implement Tab 1 (Graduate Supply & Curriculum) with Graphs 1.1 - 1.4 and explicit data references.
-- [x] Implement Tab 2 (Market Demand & Compensation) with Graphs 2.1 - 2.4 and explicit data references.
-- [x] Implement Tab 3 (Skill Mismatch & Policy Analysis) with Graphs 3.1 - 3.3, diagnostic recommendations, and explicit data references.
-- [x] Ensure zero emojis across all code, charts, tables, and documentation.
+- [x] Tab 1: ปริมาณคนที่จบ และ Skills ที่เรียนมา (Graduate Supply & Curriculum):
+  - 1.1 Program names and annual graduate production volume (2020-2025).
+  - 1.2 Core compulsory curriculum subjects by program/field.
+  - 1.3 Employed graduates headcount in Year 1, Year 2, and Year 3.
+  - 1.4 Tuition fees vs. Year 1 employment success.
+  - Cross-filtering: Field, Program Name, Degree Level, Year Range, and Reset button.
+- [x] Tab 2: ปริมาณงานที่จ้าง และ Skills ที่ต้องการ (Market Demand & Required Skills):
+  - 2.1 Open job vacancies trend across time.
+  - 2.2 Top in-demand technical and applied skills.
+  - 2.3 Top hiring companies and market share.
+  - 2.4 Compensation structure across career levels (Entry, Mid, Senior, Executive).
+  - Cross-filtering: Industry Sector, Role/Discipline, Specific Skill, Experience Level, and Reset button.
+- [x] Tab 3: วิเคราะห์ Skills Mismatch จาก Tab 1 และ Tab 2:
+  - 3.1 Skill gap heatmap matrix (Curriculum vs. Market requirements).
+  - 3.2 Diverging bar chart (Surplus vs. Shortage).
+  - 3.3 Talent Volume vs. Job Vacancies Gap.
+  - 3.4 Actionable policy recommendations with reduction targets.
+- [x] Data references explicitly embedded under all graphs and KPI summary.
+- [x] Zero emojis across all code, charts, tables, and documentation.
 
 ---
 
@@ -78,3 +94,4 @@
 | 2026-10-05 17:49 | Refactor | Removed all emojis across project | Updated app.py, data_engine.py, README.md, PROJECT_STATUS.md |
 | 2026-10-05 17:56 | Open Data | Real open datasets ingested | Kaggle DS Salaries, Open Job Postings, BLS OEWS, MHESI |
 | 2026-10-05 17:58 | Citations | Added data references under all graphs | Per-graph citations embedded in app.py |
+| 2026-10-05 18:02 | Alignment | Full verification of Tab 1, 2, 3 requirements | Cross-filtering, employed headcounts, program names, zero emojis |
