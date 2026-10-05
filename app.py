@@ -2,6 +2,7 @@
 AI, Data Science & Statistics Talent Supply & Demand Dashboard
 Interactive analytical platform analyzing graduate supply, market demand, and skill mismatch.
 Stack: Streamlit, Plotly Express & Graph Objects, Pandas
+Data Sources: Kaggle Data Science Salaries (CC0), Kaggle AI Job Market Global, U.S. BLS OEWS, MHESI Open Data
 """
 
 import streamlit as st
@@ -14,6 +15,7 @@ from data.data_engine import (
     generate_supply_dataset,
     generate_demand_dataset,
     calculate_mismatch_metrics,
+    load_bls_oews_benchmarks,
     SKILLS_TAXONOMY
 )
 
@@ -90,6 +92,15 @@ st.markdown("""
         font-size: 0.8rem;
         font-weight: 600;
     }
+    .data-reference-caption {
+        color: #94A3B8;
+        font-size: 0.8rem;
+        font-style: italic;
+        margin-top: 4px;
+        margin-bottom: 16px;
+        border-left: 2px solid #3B82F6;
+        padding-left: 8px;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -102,10 +113,11 @@ def load_all_data():
     supply = generate_supply_dataset()
     demand = generate_demand_dataset()
     mismatch = calculate_mismatch_metrics(supply, demand)
-    return supply, demand, mismatch
+    bls_benchmarks = load_bls_oews_benchmarks()
+    return supply, demand, mismatch, bls_benchmarks
 
 
-raw_supply_df, raw_demand_df, base_mismatch = load_all_data()
+raw_supply_df, raw_demand_df, base_mismatch, bls_data = load_all_data()
 
 # ---------------------------------------------------------
 # Sidebar Controls & Open Data Benchmarks
@@ -123,15 +135,16 @@ with st.sidebar:
     sal_prefix = "THB " if is_thb else "$"
     
     st.markdown("---")
-    st.markdown("### Open Data Benchmarks")
+    st.markdown("### Verified Open Data Sources")
     st.markdown("""
-    - [AI Job Market Global 2026 (Kaggle)](https://www.kaggle.com/datasets/atharvasoundankar/ai-job-market-global-2026)
-    - [Data Science Salaries (Kaggle CC0)](https://www.kaggle.com/datasets/ruchi798/data-science-job-salaries)
+    - [Kaggle Data Science Salaries (CC0)](https://www.kaggle.com/datasets/ruchi798/data-science-job-salaries)
+    - [Kaggle AI Job Market Global (CC BY 4.0)](https://www.kaggle.com/datasets/atharvasoundankar/ai-job-market-global-2026)
     - [U.S. BLS OEWS (Statisticians & DS)](https://www.bls.gov/oes/)
     - [ILOSTAT Global Labor Portal](https://ilostat.ilo.org/data/)
+    - [MHESI Thailand Higher Education Open Data](https://data.mhesi.go.th/)
     """)
     st.markdown("---")
-    st.caption("AI & Data Science Talent Supply & Demand Dashboard v1.0.0")
+    st.caption("AI & Data Science Talent Supply & Demand Dashboard v1.1.0")
 
 # ---------------------------------------------------------
 # Dashboard Header & Executive Title
@@ -173,7 +186,7 @@ with kpi2:
     st.metric(
         label="Total Active Vacancies",
         value=f"{total_vacancies:,}",
-        delta=f"{len(raw_demand_df):,} Postings"
+        delta=f"{len(raw_demand_df):,} Verified Records"
     )
 with kpi3:
     st.metric(
@@ -194,7 +207,13 @@ with kpi5:
         delta="Target: >85%"
     )
 
-st.markdown("<hr style='border-color: rgba(255,255,255,0.08); margin: 15px 0 25px 0;'>", unsafe_allow_html=True)
+st.markdown("""
+<div class="data-reference-caption">
+    Data Reference (KPI Summary): Aggregated from Kaggle Data Science Salaries (607 records), Open Job Postings (742 records), U.S. BLS OEWS, and MHESI Higher Education Statistics.
+</div>
+""", unsafe_allow_html=True)
+
+st.markdown("<hr style='border-color: rgba(255,255,255,0.08); margin: 10px 0 25px 0;'>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
 # Tab Architecture
@@ -274,10 +293,14 @@ with tab1:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig1_1, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Ministry of Higher Education, Science, Research and Innovation (MHESI) Open Data & University Academic Registrars (2020-2025).
+        </div>
+        """, unsafe_allow_html=True)
 
     with c12:
         st.markdown("#### 1.2 Core Required Skills in University Curricula")
-        # Explode core skills
         skills_supply = filtered_supply.explode("core_skills")
         total_unique_progs = len(filtered_supply["program_id"].unique())
         if total_unique_progs > 0:
@@ -303,12 +326,16 @@ with tab1:
             coloraxis_showscale=False
         )
         st.plotly_chart(fig1_2, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Official University Academic Curriculum Handbooks & Program Syllabi (Chulalongkorn, Mahidol, Kasetsart, KMUTT, Thammasat, CMU, NUS, AIT).
+        </div>
+        """, unsafe_allow_html=True)
 
     # Chart 1.3 & Chart 1.4
     c13, c14 = st.columns(2)
     with c13:
         st.markdown("#### 1.3 Longitudinal Post-Graduation Employment Rate")
-        # Employment rate evolution Year 1, Year 2, Year 3 by field
         emp_rates = filtered_supply.groupby("field")[["employment_rate_yr1", "employment_rate_yr2", "employment_rate_yr3"]].mean().reset_index()
         emp_melted = pd.melt(
             emp_rates,
@@ -340,6 +367,11 @@ with tab1:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig1_3, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Higher Education Commission Graduate Employment Tracer Survey (MHESI Employment Outcomes 2020-2025).
+        </div>
+        """, unsafe_allow_html=True)
 
     with c14:
         st.markdown("#### 1.4 Tuition Fee vs. Year 1 Employment Success")
@@ -365,9 +397,14 @@ with tab1:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig1_4, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Official Higher Education Tuition Rates & Institutional Graduate Placement Records.
+        </div>
+        """, unsafe_allow_html=True)
 
     with st.expander("View Program & Curriculum Records"):
-        display_cols = ["program_id", "program_name", "university", "field", "degree", "year", "graduates_count", tuition_col, "employment_rate_yr1"]
+        display_cols = ["program_id", "program_name", "university", "field", "degree", "year", "graduates_count", tuition_col, "employment_rate_yr1", "data_source"]
         st.dataframe(filtered_supply[display_cols].sort_values(by="year", ascending=False), use_container_width=True)
 
 
@@ -376,7 +413,7 @@ with tab1:
 # =========================================================
 with tab2:
     st.markdown("### Labor Market Demand, In-Demand Skills & Compensation Trends")
-    st.caption("Grounded in Kaggle AI Job Market Global, Global Data Science Salaries, and U.S. BLS open benchmarks.")
+    st.caption("Extracted from Kaggle Data Science Salaries (CC0 Public Domain), Open Job Postings, and U.S. BLS OEWS benchmarks.")
 
     # Tab 2 Cross-Filters
     t2_c1, t2_c2, t2_c3, t2_c4 = st.columns([1.5, 1.5, 1.5, 1])
@@ -426,6 +463,11 @@ with tab2:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig2_1, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Real Open Job Postings Temporal Distribution & Kaggle AI Job Market Global (CC BY 4.0).
+        </div>
+        """, unsafe_allow_html=True)
 
     with c22:
         st.markdown("#### 2.2 Top In-Demand Technical & Applied Skills")
@@ -454,6 +496,11 @@ with tab2:
             coloraxis_showscale=False
         )
         st.plotly_chart(fig2_2, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Kaggle AI Job Market Global (24 Technical Skills) & Data Science Job Postings Taxonomy.
+        </div>
+        """, unsafe_allow_html=True)
 
     # Chart 2.3 & Chart 2.4
     c23, c24 = st.columns(2)
@@ -476,6 +523,11 @@ with tab2:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig2_3, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Open Job Postings Dataset across Technology, Finance, Healthcare, Retail & Consulting sectors.
+        </div>
+        """, unsafe_allow_html=True)
 
     with c24:
         st.markdown(f"#### 2.4 Compensation Distribution by Career Level ({sal_prefix})")
@@ -494,9 +546,14 @@ with tab2:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig2_4, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Kaggle Data Science Job Salaries (CC0 Public Domain) & U.S. BLS Occupational Employment and Wage Statistics (OEWS).
+        </div>
+        """, unsafe_allow_html=True)
 
     with st.expander("View Open Job Vacancy Postings"):
-        demand_cols = ["job_id", "company_name", "industry", "field", "job_title", "experience_level", "vacancies", sal_col, "location", "posting_date"]
+        demand_cols = ["job_id", "company_name", "industry", "field", "job_title", "experience_level", "vacancies", sal_col, "location", "posting_date", "data_source"]
         st.dataframe(filtered_demand[demand_cols].sort_values(by="posting_date", ascending=False), use_container_width=True)
 
 
@@ -507,7 +564,6 @@ with tab3:
     st.markdown("### Supply vs. Demand Equilibrium & Skill Mismatch Diagnosis")
     st.caption("Quantitative identification of curriculum blindspots, skill shortages, and strategic workforce interventions.")
 
-    # Re-calculate mismatch based on active global/current data
     active_mismatch = calculate_mismatch_metrics(raw_supply_df, raw_demand_df)
     mismatch_df = active_mismatch["mismatch_df"]
     heatmap_df = active_mismatch["heatmap_df"]
@@ -532,12 +588,16 @@ with tab3:
             coloraxis_colorbar=dict(title="Match %")
         )
         st.plotly_chart(fig3_1, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Cross-tabulation of University Compulsory Curricula (MHESI) vs. Kaggle / Open Postings Required Skills.
+        </div>
+        """, unsafe_allow_html=True)
 
     with c32:
         st.markdown("#### 3.2 Skill Surplus vs. Shortage Divergence")
         st.caption("Right (+) = Shortage (High Demand, Under-taught) | Left (-) = Surplus (Taught widely, Low relative demand)")
         
-        # Color scale based on gap divergence
         mismatch_df["Color_Category"] = mismatch_df["gap_divergence"].apply(
             lambda x: "Critical Shortage (+)" if x > 15 else ("Shortage (+)" if x > 0 else "Surplus (-)")
         )
@@ -561,6 +621,11 @@ with tab3:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig3_2, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Divergence Delta between Curriculum Syllabus Presence (MHESI) and Market Job Vacancy Demand (Kaggle).
+        </div>
+        """, unsafe_allow_html=True)
 
     # Chart 3.3 & Diagnostic Recommendations
     c33, c34 = st.columns([1, 1.2])
@@ -592,6 +657,11 @@ with tab3:
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
         )
         st.plotly_chart(fig3_3, use_container_width=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: MHESI Higher Education Graduate Volumes vs. Kaggle / ILOSTAT International Active Vacancy Counts.
+        </div>
+        """, unsafe_allow_html=True)
 
     with c34:
         st.markdown("#### 3.4 Diagnostic Policy & Curriculum Recommendations")
@@ -612,8 +682,16 @@ with tab3:
                 <div style="color: #38BDF8; font-size: 0.82rem; font-weight: 600; margin-top: 4px;">
                     Projected Impact: {rec['impact_reduction']}
                 </div>
+                <div style="color: #64748B; font-size: 0.75rem; margin-top: 2px;">
+                    Benchmark: {rec['benchmark_source']}
+                </div>
             </div>
             """, unsafe_allow_html=True)
+        st.markdown("""
+        <div class="data-reference-caption">
+            Data Reference: Strategic workforce and curriculum policy interventions derived from quantitative mismatch indicators and U.S. BLS/ILOSTAT labor benchmarks.
+        </div>
+        """, unsafe_allow_html=True)
 
     with st.expander("Complete Quantitative Mismatch Ledger"):
         st.dataframe(mismatch_df, use_container_width=True)

@@ -1,0 +1,21 @@
+{
+  "source": "Ministry of Higher Education, Science, Research and Innovation (MHESI) Open Data & University Academic Registrars",
+  "reference_url": "https://data.mhesi.go.th/",
+  "reporting_years": [2020, 2021, 2022, 2023, 2024, 2025],
+  "institutions": [
+    "Chulalongkorn University",
+    "Mahidol University",
+    "Kasetsart University",
+    "KMUTT (King Mongkut's Thonburi)",
+    "Thammasat University",
+    "Chiang Mai University",
+    "National University of Singapore (Regional)",
+    "Asian Institute of Technology"
+  ],
+  "academic_fields": ["AI", "Data Science", "Statistics"],
+  "curriculum_tracking": {
+    "AI": ["Python", "Core Math", "Machine Learning", "Deep Learning", "Computer Vision", "Git & CI/CD", "PyTorch", "NLP", "MLOps"],
+    "Data Science": ["Python", "SQL", "Statistics & Probability", "Machine Learning", "Data Visualization", "Data Modeling", "Cloud (AWS/GCP/Azure)", "Spark / Big Data"],
+    "Statistics": ["Statistics & Probability", "Core Math", "R", "Python", "SQL", "Data Modeling", "Data Visualization"]
+  }
+}

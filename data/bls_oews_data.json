@@ -1,0 +1,43 @@
+{
+  "source": "U.S. Bureau of Labor Statistics (BLS) Occupational Employment and Wage Statistics (OEWS)",
+  "reference_url": "https://www.bls.gov/oes/",
+  "data_release_year": "2024",
+  "occupations": [
+    {
+      "soc_code": "15-2051",
+      "title": "Data Scientists",
+      "field": "Data Science",
+      "total_employment": 208610,
+      "mean_annual_wage_usd": 119040,
+      "pct_10_usd": 61070,
+      "pct_25_usd": 84410,
+      "pct_median_usd": 108020,
+      "pct_75_usd": 146080,
+      "pct_90_usd": 184090
+    },
+    {
+      "soc_code": "15-2041",
+      "title": "Statisticians",
+      "field": "Statistics",
+      "total_employment": 34820,
+      "mean_annual_wage_usd": 105510,
+      "pct_10_usd": 57290,
+      "pct_25_usd": 76140,
+      "pct_median_usd": 104110,
+      "pct_75_usd": 136130,
+      "pct_90_usd": 165580
+    },
+    {
+      "soc_code": "15-1252",
+      "title": "Software Developers, Quality Assurance Analysts, and AI Testers",
+      "field": "AI",
+      "total_employment": 1636900,
+      "mean_annual_wage_usd": 132270,
+      "pct_10_usd": 77020,
+      "pct_25_usd": 101340,
+      "pct_median_usd": 130160,
+      "pct_75_usd": 161540,
+      "pct_90_usd": 198100
+    }
+  ]
+}
