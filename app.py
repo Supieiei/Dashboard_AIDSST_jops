@@ -3,6 +3,7 @@ AI, Data Science & Statistics Talent Supply & Demand Dashboard
 Interactive analytical platform analyzing graduate supply, market demand, and skill mismatch.
 Stack: Streamlit, Plotly Express & Graph Objects, Pandas
 Data Sources: Kaggle Data Science Salaries (CC0), Open Job Postings, U.S. BLS OEWS, MHESI Open Data
+Language: English (No Emojis)
 """
 
 import streamlit as st
@@ -56,9 +57,9 @@ st.markdown("""
     }
     /* Tabs Header Styling */
     button[data-baseweb="tab"] {
-        font-size: 1.0rem !important;
+        font-size: 0.95rem !important;
         font-weight: 600 !important;
-        padding: 10px 20px !important;
+        padding: 10px 18px !important;
     }
     /* Container Cards */
     .dashboard-card {
@@ -144,7 +145,7 @@ with st.sidebar:
     - [MHESI Higher Education Open Data](https://data.mhesi.go.th/)
     """)
     st.markdown("---")
-    st.caption("Talent Supply & Demand Analytical Platform v2.0.0")
+    st.caption("Talent Supply & Demand Analytical Platform v2.1.0")
 
 # ---------------------------------------------------------
 # Dashboard Header & Executive Title
@@ -214,26 +215,26 @@ st.markdown("""
 st.markdown("<hr style='border-color: rgba(255,255,255,0.08); margin: 10px 0 25px 0;'>", unsafe_allow_html=True)
 
 # ---------------------------------------------------------
-# Tab Architecture - 3 Primary Tabs
+# Tab Architecture - 3 Primary Tabs in English
 # ---------------------------------------------------------
 tab1, tab2, tab3 = st.tabs([
-    "Tab 1: ปริมาณคนที่จบ และ Skills ที่เรียนมา (Graduate Supply & Curriculum)",
-    "Tab 2: ปริมาณงานที่จ้าง และ Skills ที่ต้องการ (Market Demand & Required Skills)",
-    "Tab 3: วิเคราะห์ Skills Mismatch (Supply vs. Demand Analysis)"
+    "Tab 1: Graduate Supply & Curriculum Skills",
+    "Tab 2: Labor Market Demand & Industry Requirements",
+    "Tab 3: Skill Mismatch Analysis (Supply vs. Demand)"
 ])
 
 # =========================================================
-# TAB 1: ปริมาณคนที่จบ และ Skills ที่เรียนมา
+# TAB 1: Graduate Supply & Curriculum Skills
 # =========================================================
 with tab1:
-    st.markdown("### คำถามที่ 1: ปริมาณคนที่จบ และ Skills ที่เรียนมา (Graduate Supply & Curriculum Skills)")
-    st.caption("วิเคราะห์ศักยภาพการผลิตกำลังคนของสถาบันการศึกษา จำแนกตามหลักสูตร รายวิชาบังคับ อัตราการได้งานทำ และค่าเทอม")
+    st.markdown("### Question 1: Graduate Supply & Curriculum Skills")
+    st.caption("Investigate higher education talent production capacity, degree programs, core compulsory courses, graduate employment horizons, and tuition fees.")
 
-    # Tab 1 Cross-Filters (เชื่อมโยงทุกกราฟ)
+    # Tab 1 Cross-Filters (Linked across all graphs in Tab 1)
     t1_f1, t1_f2, t1_f3, t1_f4, t1_f5 = st.columns([1.5, 2.0, 1.5, 2.0, 1.0])
     with t1_f1:
         t1_field = st.selectbox(
-            "สาขาวิชา (Field):",
+            "Discipline / Field:",
             options=["All Fields", "AI", "Data Science", "Statistics"],
             key="t1_field"
         )
@@ -242,17 +243,17 @@ with tab1:
         if t1_field != "All Fields":
             matched_progs = sorted(raw_supply_df[raw_supply_df["field"] == t1_field]["program_name"].unique().tolist())
             all_programs = ["All Programs"] + matched_progs
-        t1_prog = st.selectbox("ชื่อหลักสูตร (Program Name):", options=all_programs, key="t1_prog")
+        t1_prog = st.selectbox("Degree Program:", options=all_programs, key="t1_prog")
     with t1_f3:
         t1_degree = st.selectbox(
-            "ระดับการศึกษา (Degree):",
+            "Degree Level:",
             options=["All Degrees", "Bachelor's", "Master's", "Doctorate"],
             key="t1_degree"
         )
     with t1_f4:
         year_min, year_max = int(raw_supply_df["year"].min()), int(raw_supply_df["year"].max())
         t1_year_range = st.slider(
-            "ช่วงปีที่จบ (Year Range):",
+            "Graduation Year Range:",
             min_value=year_min,
             max_value=year_max,
             value=(year_min, year_max),
@@ -280,12 +281,11 @@ with tab1:
     if t1_degree != "All Degrees":
         filtered_supply = filtered_supply[filtered_supply["degree"] == t1_degree]
 
-    # Sub-controls for Graph 1.1 Breakdown
+    # Chart 1.1 & Chart 1.2
     c11, c12 = st.columns(2)
     with c11:
-        st.markdown("#### 1.1 ชื่อหลักสูตรที่ผลิตบัณฑิต (AI, Data Science, Stat) และจำนวนที่ผลิตได้ในแต่ละปี")
+        st.markdown("#### 1.1 Academic Degree Programs (AI, Data Science, Statistics) and Annual Graduate Output")
         
-        # Determine grouping dimension based on selection
         if t1_prog != "All Programs":
             prog_trend = filtered_supply.groupby(["year", "program_name"])["graduates_count"].sum().reset_index()
             fig1_1 = px.bar(
@@ -293,7 +293,7 @@ with tab1:
                 x="year",
                 y="graduates_count",
                 color="program_name",
-                labels={"graduates_count": "จำนวนบัณฑิตที่จบ (คน)", "year": "ปีการศึกษา", "program_name": "ชื่อหลักสูตร"},
+                labels={"graduates_count": "Annual Graduates (Headcount)", "year": "Academic Year", "program_name": "Degree Program"},
                 template="plotly_dark"
             )
         else:
@@ -304,7 +304,7 @@ with tab1:
                 y="graduates_count",
                 color="program_name",
                 barmode="stack",
-                labels={"graduates_count": "จำนวนบัณฑิตที่จบ (คน)", "year": "ปีการศึกษา", "program_name": "ชื่อหลักสูตร"},
+                labels={"graduates_count": "Annual Graduates (Headcount)", "year": "Academic Year", "program_name": "Degree Program"},
                 template="plotly_dark"
             )
         fig1_1.update_layout(
@@ -314,28 +314,28 @@ with tab1:
         st.plotly_chart(fig1_1, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: กระทรวงการอุดมศึกษา วิทยาศาสตร์ วิจัยและนวัตกรรม (MHESI Open Data) และทะเบียนมหาวิทยาลัย (Chulalongkorn, Mahidol, KU, KMUTT, TU, CMU, NUS, AIT) 2020-2025.
+            Data Reference: Ministry of Higher Education, Science, Research and Innovation (MHESI Open Data) and University Registrar Databases (2020-2025).
         </div>
         """, unsafe_allow_html=True)
 
     with c12:
-        st.markdown("#### 1.2 รายวิชาบังคับในแต่ละหลักสูตรที่ตรงกับสายงาน (Core Required Curriculum Skills)")
+        st.markdown("#### 1.2 Core Required Courses in University Curricula (Compulsory Skills)")
         skills_supply = filtered_supply.explode("core_skills")
         total_unique_progs = len(filtered_supply["program_id"].unique())
         if total_unique_progs > 0:
             skills_freq = skills_supply["core_skills"].value_counts().reset_index()
-            skills_freq.columns = ["รายวิชาบังคับ", "จำนวนหลักสูตร"]
-            skills_freq["สัดส่วนหลักสูตรที่เปิดสอน (%)"] = (skills_freq["จำนวนหลักสูตร"] / total_unique_progs * 100).round(1)
+            skills_freq.columns = ["Compulsory Course / Skill", "Program Count"]
+            skills_freq["Share of Curricula (%)"] = (skills_freq["Program Count"] / total_unique_progs * 100).round(1)
         else:
-            skills_freq = pd.DataFrame(columns=["รายวิชาบังคับ", "จำนวนหลักสูตร", "สัดส่วนหลักสูตรที่เปิดสอน (%)"])
+            skills_freq = pd.DataFrame(columns=["Compulsory Course / Skill", "Program Count", "Share of Curricula (%)"])
 
         fig1_2 = px.bar(
             skills_freq.head(10),
-            x="สัดส่วนหลักสูตรที่เปิดสอน (%)",
-            y="รายวิชาบังคับ",
+            x="Share of Curricula (%)",
+            y="Compulsory Course / Skill",
             orientation="h",
-            labels={"สัดส่วนหลักสูตรที่เปิดสอน (%)": "สัดส่วนหลักสูตรที่บรรจุเป็นวิชาบังคับ (%)", "รายวิชาบังคับ": "รายวิชา / ทักษะ"},
-            color="สัดส่วนหลักสูตรที่เปิดสอน (%)",
+            labels={"Share of Curricula (%)": "Proportion of Programs Mandating Course (%)", "Compulsory Course / Skill": "Course / Technical Discipline"},
+            color="Share of Curricula (%)",
             color_continuous_scale="Blues",
             template="plotly_dark"
         )
@@ -347,40 +347,39 @@ with tab1:
         st.plotly_chart(fig1_2, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: คู่มือหลักสูตรและรายวิชาบังคับจากสภาวิชาชีพและหลักสูตรระดับอุดมศึกษา (Curriculum Catalogs & Accreditation Records).
+            Data Reference: Official Higher Education Course Catalogs and Curriculum Accreditation Handbooks (Chulalongkorn, Mahidol, KU, KMUTT, TU, CMU, NUS, AIT).
         </div>
         """, unsafe_allow_html=True)
 
     # Chart 1.3 & Chart 1.4
     c13, c14 = st.columns(2)
     with c13:
-        st.markdown("#### 1.3 จำนวนบัณฑิตที่ได้งานทำในปีแรก ปีที่สอง และปีที่สาม หลังจบการศึกษา (Employed Headcount)")
-        # Show actual headcount of employed graduates across year milestones
+        st.markdown("#### 1.3 Employed Graduates by Post-Graduation Career Horizon (Headcount)")
         emp_totals = filtered_supply.groupby("field")[["employed_yr1", "employed_yr2", "employed_yr3"]].sum().reset_index()
         emp_melted = pd.melt(
             emp_totals,
             id_vars=["field"],
             value_vars=["employed_yr1", "employed_yr2", "employed_yr3"],
             var_name="Milestone",
-            value_name="จำนวนผู้มีงานทำ (คน)"
+            value_name="Employed Graduates"
         )
         emp_melted["Milestone"] = emp_melted["Milestone"].map({
-            "employed_yr1": "ปีแรก (Year 1)",
-            "employed_yr2": "ปีที่สอง (Year 2)",
-            "employed_yr3": "ปีที่สาม (Year 3)"
+            "employed_yr1": "Year 1 Post-Grad",
+            "employed_yr2": "Year 2 Post-Grad",
+            "employed_yr3": "Year 3 Post-Grad"
         })
         fig1_3 = px.bar(
             emp_melted,
             x="Milestone",
-            y="จำนวนผู้มีงานทำ (คน)",
+            y="Employed Graduates",
             color="field",
             barmode="group",
-            text="จำนวนผู้มีงานทำ (คน)",
-            labels={"จำนวนผู้มีงานทำ (คน)": "จำนวนบัณฑิตที่ได้งานทำ (คน)", "Milestone": "ช่วงเวลาหลังจบ", "field": "สาขาวิชา"},
+            text="Employed Graduates",
+            labels={"Employed Graduates": "Employed Graduates (Headcount)", "Milestone": "Career Horizon", "field": "Discipline"},
             color_discrete_map={"AI": "#6366F1", "Data Science": "#06B6D4", "Statistics": "#F59E0B"},
             template="plotly_dark"
         )
-        fig1_3.update_traces(texttemplate="%{text:,} คน", textposition="outside")
+        fig1_3.update_traces(texttemplate="%{text:,} grads", textposition="outside")
         fig1_3.update_layout(
             margin=dict(l=20, r=20, t=30, b=20),
             legend=dict(orientation="h", yanchor="bottom", y=1.02, xanchor="right", x=1)
@@ -388,12 +387,12 @@ with tab1:
         st.plotly_chart(fig1_3, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: แบบสำรวจภาวะการมีงานทำของบัณฑิต (Graduate Employment Longitudinal Tracer Survey, สกอ./อว. 2020-2025).
+            Data Reference: Higher Education Commission Graduate Employment Longitudinal Tracer Survey (2020-2025).
         </div>
         """, unsafe_allow_html=True)
 
     with c14:
-        st.markdown("#### 1.4 ค่าเทอมตลอดหลักสูตรเทียบกับอัตราการได้งานทำปีแรก (Tuition Fee vs. Employment Rate)")
+        st.markdown("#### 1.4 Total Tuition Fee vs. Year 1 Career Placement Rate")
         tuition_col = "tuition_fee_thb" if is_thb else "tuition_fee_usd"
         fig1_4 = px.scatter(
             filtered_supply,
@@ -404,9 +403,9 @@ with tab1:
             hover_name="program_name",
             hover_data=["university", "degree", "graduates_count", "employed_yr1"],
             labels={
-                tuition_col: f"ค่าเทอมตลอดหลักสูตร ({sal_prefix})",
-                "employment_rate_yr1": "อัตราการได้งานทำปีแรก (%)",
-                "field": "สาขาวิชา"
+                tuition_col: f"Total Program Tuition ({sal_prefix})",
+                "employment_rate_yr1": "Year 1 Placement Rate (%)",
+                "field": "Discipline"
             },
             color_discrete_map={"AI": "#6366F1", "Data Science": "#06B6D4", "Statistics": "#F59E0B"},
             template="plotly_dark"
@@ -418,36 +417,36 @@ with tab1:
         st.plotly_chart(fig1_4, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ประกาศอัตราค่าธรรมเนียมการศึกษาของมหาวิทยาลัย และฐานข้อมูลการได้งานทำของบัณฑิตจบใหม่.
+            Data Reference: Official University Academic Tuition Schedules and Institutional Placement Statistics.
         </div>
         """, unsafe_allow_html=True)
 
-    with st.expander("ดูตารางข้อมูลรายละเอียดหลักสูตรและการผลิตบัณฑิต (Curriculum Records)"):
+    with st.expander("View Detailed Program & Curriculum Records"):
         display_cols = ["program_id", "program_name", "university", "field", "degree", "year", "graduates_count", tuition_col, "employed_yr1", "employment_rate_yr1", "data_source"]
         st.dataframe(filtered_supply[display_cols].sort_values(by="year", ascending=False), use_container_width=True)
 
 
 # =========================================================
-# TAB 2: ปริมาณงานที่จ้าง และ Skills ที่ต้องการ
+# TAB 2: Labor Market Demand & Industry Requirements
 # =========================================================
 with tab2:
-    st.markdown("### คำถามที่ 2: ปริมาณงานที่จ้าง และ Skills ที่ต้องการ (Market Demand & Industry Requirements)")
-    st.caption("วิเคราะห์อุปสงค์ตลาดแรงงาน: ปริมาณตำแหน่งงานว่าง ทักษะที่ต้องการ บริษัทที่เปิดรับ และโครงสร้างค่าตอบแทนในแต่ละระดับการทำงาน")
+    st.markdown("### Question 2: Labor Market Demand & Industry Requirements")
+    st.caption("Analyze labor market demand: vacancy volumes, required technical competencies, top hiring employers, and compensation structures across career tiers.")
 
-    # Tab 2 Cross-Filters (เชื่อมโยงทุกกราฟ)
+    # Tab 2 Cross-Filters (Linked across all graphs in Tab 2)
     t2_f1, t2_f2, t2_f3, t2_f4, t2_f5 = st.columns([1.5, 1.5, 1.5, 1.5, 1.0])
     with t2_f1:
         all_industries = ["All Industries"] + sorted(raw_demand_df["industry"].unique().tolist())
-        t2_ind = st.selectbox("กลุ่มอุตสาหกรรม (Industry Sector):", options=all_industries, key="t2_ind")
+        t2_ind = st.selectbox("Industry Sector:", options=all_industries, key="t2_ind")
     with t2_f2:
         all_roles = ["All Roles"] + sorted(raw_demand_df["field"].unique().tolist())
-        t2_role = st.selectbox("สายงาน (Role / Discipline):", options=all_roles, key="t2_role")
+        t2_role = st.selectbox("Role / Discipline:", options=all_roles, key="t2_role")
     with t2_f3:
         all_skills = ["All Skills"] + sorted(SKILLS_TAXONOMY)
-        t2_skill = st.selectbox("ทักษะที่ต้องการ (Skill Filter):", options=all_skills, key="t2_skill")
+        t2_skill = st.selectbox("Technical Skill Filter:", options=all_skills, key="t2_skill")
     with t2_f4:
         all_exp = ["All Experience Levels", "Entry-Level", "Mid-Level", "Senior", "Executive"]
-        t2_exp = st.selectbox("ระดับประสบการณ์ (Experience Level):", options=all_exp, key="t2_exp")
+        t2_exp = st.selectbox("Career Experience Level:", options=all_exp, key="t2_exp")
     with t2_f5:
         st.write("")
         st.write("")
@@ -472,14 +471,14 @@ with tab2:
     # Chart 2.1 & Chart 2.2
     c21, c22 = st.columns(2)
     with c21:
-        st.markdown("#### 2.1 ปริมาณตำแหน่งที่ว่างในตลาดตามไทม์ไลน์ (Open Job Vacancies Trend)")
+        st.markdown("#### 2.1 Active Job Vacancies Trend over Time")
         vac_trend = filtered_demand.groupby(["posting_year_month", "field"])["vacancies"].sum().reset_index()
         fig2_1 = px.area(
             vac_trend,
             x="posting_year_month",
             y="vacancies",
             color="field",
-            labels={"vacancies": "ปริมาณตำแหน่งงานว่าง (อัตรา)", "posting_year_month": "ช่วงเวลา (เดือน/ปี)", "field": "สายงาน"},
+            labels={"vacancies": "Open Vacancies (Count)", "posting_year_month": "Timeline (Month/Year)", "field": "Discipline"},
             color_discrete_map={"AI": "#6366F1", "Data Science": "#06B6D4", "Statistics": "#F59E0B"},
             template="plotly_dark"
         )
@@ -490,28 +489,28 @@ with tab2:
         st.plotly_chart(fig2_1, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ข้อมูลประกาศรับสมัครงานจริง (Open Job Postings) และ Kaggle AI Job Market Global (CC BY 4.0).
+            Data Reference: Verified Open Job Postings Dataset and Kaggle AI Job Market Global (CC BY 4.0).
         </div>
         """, unsafe_allow_html=True)
 
     with c22:
-        st.markdown("#### 2.2 Skills ที่ตลาดต้องการมากที่สุด (Top In-Demand Technical & Applied Skills)")
+        st.markdown("#### 2.2 Top In-Demand Technical & Applied Skills")
         demand_skills_exp = filtered_demand.explode("required_skills")
         total_vac = filtered_demand["vacancies"].sum()
         if total_vac > 0:
             skill_demand_counts = demand_skills_exp.groupby("required_skills")["vacancies"].sum().reset_index()
-            skill_demand_counts.columns = ["ทักษะ", "จำนวนตำแหน่งที่ต้องการ"]
-            skill_demand_counts = skill_demand_counts.sort_values(by="จำนวนตำแหน่งที่ต้องการ", ascending=False).head(10)
+            skill_demand_counts.columns = ["Technical Skill", "Requested Vacancies"]
+            skill_demand_counts = skill_demand_counts.sort_values(by="Requested Vacancies", ascending=False).head(10)
         else:
-            skill_demand_counts = pd.DataFrame(columns=["ทักษะ", "จำนวนตำแหน่งที่ต้องการ"])
+            skill_demand_counts = pd.DataFrame(columns=["Technical Skill", "Requested Vacancies"])
 
         fig2_2 = px.bar(
             skill_demand_counts,
-            x="จำนวนตำแหน่งที่ต้องการ",
-            y="ทักษะ",
+            x="Requested Vacancies",
+            y="Technical Skill",
             orientation="h",
-            labels={"จำนวนตำแหน่งที่ต้องการ": "จำนวนตำแหน่งงานที่ระบุทักษะนี้ (อัตรา)", "ทักษะ": "ทักษะที่ต้องการ"},
-            color="จำนวนตำแหน่งที่ต้องการ",
+            labels={"Requested Vacancies": "Requested Vacancies Count", "Technical Skill": "Required Competency"},
+            color="Requested Vacancies",
             color_continuous_scale="Purples",
             template="plotly_dark"
         )
@@ -523,14 +522,14 @@ with tab2:
         st.plotly_chart(fig2_2, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: การจำแนกทักษะจากประกาศรับสมัครงานจริง (Skills Taxonomy Extraction จาก Kaggle Data Science & Open Postings).
+            Data Reference: Skills Taxonomy Extraction from Kaggle Data Science & Open Job Postings.
         </div>
         """, unsafe_allow_html=True)
 
     # Chart 2.3 & Chart 2.4
     c23, c24 = st.columns(2)
     with c23:
-        st.markdown("#### 2.3 บริษัทที่เปิดรับสมัครงานและส่วนแบ่งตำแหน่งงานว่าง (Top Hiring Companies)")
+        st.markdown("#### 2.3 Leading Hiring Employers and Vacancy Market Share")
         comp_vac = filtered_demand.groupby(["company_name", "industry"])["vacancies"].sum().reset_index()
         comp_vac = comp_vac.sort_values(by="vacancies", ascending=False).head(10)
         fig2_3 = px.bar(
@@ -539,7 +538,7 @@ with tab2:
             y="company_name",
             color="industry",
             orientation="h",
-            labels={"vacancies": "จำนวนตำแหน่งงานว่าง (อัตรา)", "company_name": "ชื่อบริษัท", "industry": "กลุ่มอุตสาหกรรม"},
+            labels={"vacancies": "Open Vacancies (Count)", "company_name": "Employer Name", "industry": "Industry Sector"},
             template="plotly_dark"
         )
         fig2_3.update_layout(
@@ -550,19 +549,19 @@ with tab2:
         st.plotly_chart(fig2_3, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ฐานข้อมูลบริษัทผู้ว่าจ้างจริงจาก Glassdoor / Open Postings (Tech, Finance, Healthcare, Consulting).
+            Data Reference: Verified Employer Job Postings Dataset across Technology, Finance, Healthcare, and Consulting.
         </div>
         """, unsafe_allow_html=True)
 
     with c24:
-        st.markdown(f"#### 2.4 โครงสร้างเงินเดือนในแต่ละระดับการทำงาน (Salary by Career Level in {sal_prefix})")
+        st.markdown(f"#### 2.4 Compensation Distribution by Career Level ({sal_prefix})")
         fig2_4 = px.box(
             filtered_demand,
             x="experience_level",
             y=sal_col,
             color="field",
             category_orders={"experience_level": ["Entry-Level", "Mid-Level", "Senior", "Executive"]},
-            labels={sal_col: f"อัตราเงินเดือน ({sal_prefix})", "experience_level": "ระดับการทำงาน", "field": "สายงาน"},
+            labels={sal_col: f"Salary Range ({sal_prefix})", "experience_level": "Career Level", "field": "Discipline"},
             color_discrete_map={"AI": "#6366F1", "Data Science": "#06B6D4", "Statistics": "#F59E0B"},
             template="plotly_dark"
         )
@@ -573,40 +572,39 @@ with tab2:
         st.plotly_chart(fig2_4, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: Kaggle Data Science Job Salaries (CC0 Public Domain) และ U.S. BLS OEWS May Benchmark Statistics.
+            Data Reference: Kaggle Data Science Job Salaries (CC0 Public Domain) and U.S. BLS OEWS Benchmark Data.
         </div>
         """, unsafe_allow_html=True)
 
-    with st.expander("ดูตารางข้อมูลประกาศรับสมัครงานจริง (Open Job Postings Ledger)"):
+    with st.expander("View Open Job Postings Ledger"):
         demand_cols = ["job_id", "company_name", "industry", "field", "job_title", "experience_level", "vacancies", sal_col, "location", "posting_date", "data_source"]
         st.dataframe(filtered_demand[demand_cols].sort_values(by="posting_date", ascending=False), use_container_width=True)
 
 
 # =========================================================
-# TAB 3: วิเคราะห์ Skills Mismatch จาก Tab 1 และ Tab 2
+# TAB 3: Skill Mismatch Analysis (Supply vs. Demand)
 # =========================================================
 with tab3:
-    st.markdown("### Tab 3: การวิเคราะห์ Skills Mismatch (Supply vs. Demand Equilibrium)")
-    st.caption("เปรียบเทียบข้อมูลระหว่าง Tab 1 (อุปทาน/สิ่งที่หลักสูตรสอน) และ Tab 2 (อุปสงค์/สิ่งที่ตลาดต้องการ) เพื่อวิเคราะห์ช่องว่างทักษะและดุลยภาพกำลังคน")
+    st.markdown("### Tab 3: Skill Mismatch Analysis (Supply vs. Demand Equilibrium)")
+    st.caption("Synthesize Tab 1 (higher education curriculum supply) and Tab 2 (market job demand) to identify skill shortages, surpluses, and talent volume gaps.")
 
     # Tab 3 Cross-Filter by Field
     t3_c1, t3_c2 = st.columns([2, 1])
     with t3_c1:
         t3_field = st.selectbox(
-            "เลือกสายงานที่ต้องการวิเคราะห์ Mismatch เฉพาะด้าน:",
-            options=["ทุกสายงาน (All Fields)", "AI", "Data Science", "Statistics"],
+            "Filter Scope by Discipline:",
+            options=["All Fields", "AI", "Data Science", "Statistics"],
             key="t3_field"
         )
     with t3_c2:
         st.write("")
         st.write("")
         if st.button("Reset Tab 3 Filter", key="t3_reset"):
-            st.session_state["t3_field"] = "ทุกสายงาน (All Fields)"
+            st.session_state["t3_field"] = "All Fields"
             st.rerun()
 
-    # Re-calculate Mismatch metrics based on selected scope
-    target_supply = raw_supply_df if t3_field == "ทุกสายงาน (All Fields)" else raw_supply_df[raw_supply_df["field"] == t3_field]
-    target_demand = raw_demand_df if t3_field == "ทุกสายงาน (All Fields)" else raw_demand_df[raw_demand_df["field"] == t3_field]
+    target_supply = raw_supply_df if t3_field == "All Fields" else raw_supply_df[raw_supply_df["field"] == t3_field]
+    target_demand = raw_demand_df if t3_field == "All Fields" else raw_demand_df[raw_demand_df["field"] == t3_field]
     
     active_mismatch = calculate_mismatch_metrics(target_supply, target_demand)
     mismatch_df = active_mismatch["mismatch_df"]
@@ -617,10 +615,10 @@ with tab3:
     # Chart 3.1 & Chart 3.2
     c31, c32 = st.columns(2)
     with c31:
-        st.markdown("#### 3.1 Heatmap ช่องว่างทักษะ (รายวิชาในหลักสูตร vs. ทักษะที่ตลาดต้องการ)")
+        st.markdown("#### 3.1 Skill Gap Heatmap: Academic Curricula vs. Industry Demand Matrix")
         fig3_1 = px.imshow(
             heatmap_df,
-            labels=dict(x="ทักษะที่ตลาดงานต้องการ (Market Demand)", y="รายวิชาบังคับในหลักสูตร (Curriculum Core)", color="ความสอดคล้อง (%)"),
+            labels=dict(x="Industry Required Competencies", y="Academic Core Courses", color="Alignment Match %"),
             x=heatmap_df.columns,
             y=heatmap_df.index,
             color_continuous_scale="Viridis",
@@ -629,18 +627,18 @@ with tab3:
         )
         fig3_1.update_layout(
             margin=dict(l=20, r=20, t=30, b=20),
-            coloraxis_colorbar=dict(title="ความสอดคล้อง %")
+            coloraxis_colorbar=dict(title="Match %")
         )
         st.plotly_chart(fig3_1, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: การคำนวณ Co-occurrence Matrix ระหว่างรายวิชาบังคับของ อว. กับความต้องการในประกาศงานจริงของ Kaggle.
+            Data Reference: Co-occurrence Matrix calculated between University Core Courses and Kaggle Job Postings Requirements.
         </div>
         """, unsafe_allow_html=True)
 
     with c32:
-        st.markdown("#### 3.2 กราฟจำแนกทักษะส่วนเกิน vs. ขาดแคลน (Skill Surplus vs. Shortage Divergence)")
-        st.caption("ด้านขวา (+) = Shortage (ตลาดต้องการสูง แต่หลักสูตรเปิดสอนน้อย) | ด้านซ้าย (-) = Surplus (หลักสูตรสอนเยอะ แต่ตลาดระบุความต้องการน้อย)")
+        st.markdown("#### 3.2 Skill Surplus vs. Shortage Divergence")
+        st.caption("Right (+) = Shortage (High Industry Demand, Under-taught) | Left (-) = Surplus (Taught Intensively, Lower Market Demand)")
         
         mismatch_df["Color_Category"] = mismatch_df["gap_divergence"].apply(
             lambda x: "Critical Shortage (+)" if x > 15 else ("Shortage (+)" if x > 0 else "Surplus (-)")
@@ -656,7 +654,7 @@ with tab3:
                 "Shortage (+)": "#F59E0B",
                 "Surplus (-)": "#10B981"
             },
-            labels={"gap_divergence": "ค่าความแตกต่าง (ความต้องการตลาด % - การสอนในหลักสูตร %)", "skill": "ทักษะ"},
+            labels={"gap_divergence": "Divergence Delta (Market Demand % - Curriculum Supply %)", "skill": "Competency"},
             template="plotly_dark"
         )
         fig3_2.update_layout(
@@ -667,33 +665,33 @@ with tab3:
         st.plotly_chart(fig3_2, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ผลต่างสัดส่วนร้อยละ (Divergence Delta) ระหว่างสัดส่วนการสอนจริงในหลักสูตร กับความต้องการในตลาดแรงงาน.
+            Data Reference: Net Percentage Delta between Curriculum Presence and Market Job Demand.
         </div>
         """, unsafe_allow_html=True)
 
     # Chart 3.3 & Diagnostic Recommendations
     c33, c34 = st.columns([1, 1.2])
     with c33:
-        st.markdown("#### 3.3 ดุลยภาพจำนวนคนที่จบต่อปี VS ปริมาณตำแหน่งงานว่าง (Talent Volume Gap)")
+        st.markdown("#### 3.3 Annual Graduate Supply vs. First-Year Job Vacancies (Volume Gap)")
         volume_melted = pd.melt(
             volume_df,
             id_vars=["field"],
             value_vars=["annual_graduates", "job_vacancies"],
             var_name="Category",
-            value_name="จำนวนคน/อัตรา"
+            value_name="Headcount"
         )
         volume_melted["Category"] = volume_melted["Category"].map({
-            "annual_graduates": "จำนวนบัณฑิตที่จบต่อปี (Supply)",
-            "job_vacancies": "ปริมาณตำแหน่งงานว่างแรกเข้า (Demand)"
+            "annual_graduates": "Annual Graduate Supply (Supply)",
+            "job_vacancies": "First-Year Job Vacancies (Demand)"
         })
         fig3_3 = px.bar(
             volume_melted,
             x="field",
-            y="จำนวนคน/อัตรา",
+            y="Headcount",
             color="Category",
             barmode="group",
-            labels={"จำนวนคน/อัตรา": "จำนวนคน / ตำแหน่งงาน (อัตรา)", "field": "สาขาวิชา", "Category": "กลุ่มข้อมูล"},
-            color_discrete_map={"จำนวนบัณฑิตที่จบต่อปี (Supply)": "#3B82F6", "ปริมาณตำแหน่งงานว่างแรกเข้า (Demand)": "#EC4899"},
+            labels={"Headcount": "Headcount / Vacancy Count", "field": "Discipline", "Category": "Data Dimension"},
+            color_discrete_map={"Annual Graduate Supply (Supply)": "#3B82F6", "First-Year Job Vacancies (Demand)": "#EC4899"},
             template="plotly_dark"
         )
         fig3_3.update_layout(
@@ -703,12 +701,12 @@ with tab3:
         st.plotly_chart(fig3_3, use_container_width=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ยอดบัณฑิตจบใหม่ประจำปี (อว.) เทียบกับตำแหน่งงานว่างจริงในระบบ (Kaggle & ILOSTAT Indicators).
+            Data Reference: Annual Graduation Headcounts (MHESI) vs. Active First-Year Job Openings (Kaggle & ILOSTAT).
         </div>
         """, unsafe_allow_html=True)
 
     with c34:
-        st.markdown("#### 3.4 ตารางวินิจฉัยและข้อเสนอแนะเชิงนโยบายเพื่อลด Mismatch (Policy Recommendations)")
+        st.markdown("#### 3.4 Strategic Policy & Curriculum Recommendations")
         for _, rec in rec_df.iterrows():
             badge_class = "badge-urgent" if "Urgent" in rec["priority"] else ("badge-moderate" if "Moderate" in rec["priority"] else "badge-positive")
             st.markdown(f"""
@@ -718,26 +716,26 @@ with tab3:
                     <span class="{badge_class}">{rec['priority']}</span>
                 </div>
                 <div style="color: #CBD5E1; font-size: 0.88rem; margin-bottom: 6px;">
-                    <strong>ช่องว่างทักษะที่พบ:</strong> {rec['skill_gap']}
+                    <strong>Identified Gap:</strong> {rec['skill_gap']}
                 </div>
                 <div style="color: #94A3B8; font-size: 0.85rem; line-height: 1.4;">
-                    <strong>ข้อเสนอแนะเชิงนโยบาย:</strong> {rec['policy_action']}
+                    <strong>Policy Intervention:</strong> {rec['policy_action']}
                 </div>
                 <div style="color: #38BDF8; font-size: 0.82rem; font-weight: 600; margin-top: 4px;">
-                    เป้าหมายการลด Mismatch: {rec['impact_reduction']}
+                    Target Mismatch Reduction: {rec['impact_reduction']}
                 </div>
                 <div style="color: #64748B; font-size: 0.75rem; margin-top: 2px;">
-                    แหล่งข้อมูลอ้างอิง: {rec['benchmark_source']}
+                    Benchmark Source: {rec['benchmark_source']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
         st.markdown("""
         <div class="data-reference-caption">
-            Data Reference: ข้อเสนอแนะเชิงนโยบายคำนวณจากค่าดัชนี Skill Mismatch และมาตรฐานสมรรถนะอาชีพ U.S. BLS / ILOSTAT.
+            Data Reference: Strategic workforce and curriculum policy interventions derived from quantitative mismatch indicators and U.S. BLS/ILOSTAT labor benchmarks.
         </div>
         """, unsafe_allow_html=True)
 
-    with st.expander("ดูตารางสรุปค่า Mismatch รายทักษะทั้งหมด (Quantitative Mismatch Ledger)"):
+    with st.expander("View Quantitative Skill Mismatch Ledger"):
         st.dataframe(mismatch_df, use_container_width=True)
 
 # ---------------------------------------------------------
