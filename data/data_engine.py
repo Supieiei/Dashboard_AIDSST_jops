@@ -362,28 +362,28 @@ def calculate_mismatch_metrics(supply_df: pd.DataFrame, demand_df: pd.DataFrame)
     # 6. Actionable Policy & Curriculum Recommendations
     recommendations = [
         {
-            "priority": "🔴 Urgent",
+            "priority": "Urgent",
             "target_field": "AI & Data Science",
             "skill_gap": "MLOps & Cloud Deployment (+38.4% Shortage)",
             "policy_action": "Embed mandatory 3-credit semester coursework on Cloud (AWS/GCP) and MLOps (CI/CD, Docker, Model Registry) into Year 3.",
             "impact_reduction": "35% Mismatch Reduction"
         },
         {
-            "priority": "🔴 Urgent",
+            "priority": "Urgent",
             "target_field": "AI",
             "skill_gap": "LLMs & Generative AI Engineering (+28.2% Shortage)",
             "policy_action": "Establish AI Capstone Studio with enterprise API credits focusing on RAG, fine-tuning, and LLM safety evaluation.",
             "impact_reduction": "26% Mismatch Reduction"
         },
         {
-            "priority": "🟡 Moderate",
+            "priority": "Moderate",
             "target_field": "Data Science & Statistics",
             "skill_gap": "Production SQL & Big Data (+22.1% Shortage)",
             "policy_action": "Upgrade theoretical database courses to distributed querying (PySpark, BigQuery, DuckDB) and data pipeline design.",
             "impact_reduction": "20% Mismatch Reduction"
         },
         {
-            "priority": "🟢 Curriculum Optimization",
+            "priority": "Curriculum Optimization",
             "target_field": "Statistics",
             "skill_gap": "R & Legacy Desktop Tooling (-24.5% Surplus)",
             "policy_action": "Transition legacy R/SPSS-centric statistical computing courses to dual Python/R with modern statistical packages (Statsmodels, Stan).",

@@ -22,7 +22,7 @@ from data.data_engine import (
 # ---------------------------------------------------------
 st.set_page_config(
     page_title="Talent Supply & Demand Dashboard | AI, DS & Statistics",
-    page_icon="⚖️",
+    page_icon=None,
     layout="wide",
     initial_sidebar_state="expanded"
 )
@@ -111,19 +111,19 @@ raw_supply_df, raw_demand_df, base_mismatch = load_all_data()
 # Sidebar Controls & Open Data Benchmarks
 # ---------------------------------------------------------
 with st.sidebar:
-    st.markdown("### 🎛️ Global Display Settings")
+    st.markdown("### Global Display Settings")
     currency_mode = st.radio(
         "Currency Display:",
-        options=["USD ($)", "THB (฿)"],
+        options=["USD ($)", "THB (B)"],
         index=0,
         horizontal=True
     )
     is_thb = currency_mode.startswith("THB")
     sal_col = "avg_salary_thb" if is_thb else "avg_salary_usd"
-    sal_prefix = "฿" if is_thb else "$"
+    sal_prefix = "THB " if is_thb else "$"
     
     st.markdown("---")
-    st.markdown("### 📚 Open Data Benchmarks")
+    st.markdown("### Open Data Benchmarks")
     st.markdown("""
     - [AI Job Market Global 2026 (Kaggle)](https://www.kaggle.com/datasets/atharvasoundankar/ai-job-market-global-2026)
     - [Data Science Salaries (Kaggle CC0)](https://www.kaggle.com/datasets/ruchi798/data-science-job-salaries)
@@ -139,7 +139,7 @@ with st.sidebar:
 st.markdown("""
 <div style="padding: 10px 0 20px 0;">
     <h1 style="margin-bottom: 6px; font-weight: 800; font-size: 2.2rem;">
-        ⚖️ AI, Data Science & Statistics Talent Supply & Demand Dashboard
+        AI, Data Science & Statistics Talent Supply & Demand Dashboard
     </h1>
     <p style="color: #94A3B8; font-size: 1.05rem; margin-top: 0;">
         Equilibrium analysis of Higher Education Curriculum Supply vs. Market Labor Demand & Skill Mismatch Diagnosis
@@ -200,16 +200,16 @@ st.markdown("<hr style='border-color: rgba(255,255,255,0.08); margin: 15px 0 25p
 # Tab Architecture
 # ---------------------------------------------------------
 tab1, tab2, tab3 = st.tabs([
-    "🎓 Graduate Supply & Curriculum",
-    "💼 Market Demand & Compensation",
-    "⚖️ Skill Mismatch & Policy Analysis"
+    "Graduate Supply & Curriculum",
+    "Market Demand & Compensation",
+    "Skill Mismatch & Policy Analysis"
 ])
 
 # =========================================================
 # TAB 1: Graduate Supply & Curriculum Skills
 # =========================================================
 with tab1:
-    st.markdown("### 🎓 Higher Education Production Capacity & Academic Curriculum")
+    st.markdown("### Higher Education Production Capacity & Academic Curriculum")
     st.caption("Investigate annual graduate output, core curriculum course distribution, tuition fees, and career placement rates.")
 
     # Tab 1 Cross-Filters
@@ -238,7 +238,7 @@ with tab1:
     with t1_c4:
         st.write("")
         st.write("")
-        if st.button("🔄 Reset Filters", key="t1_reset"):
+        if st.button("Reset Filters", key="t1_reset"):
             st.session_state["t1_field"] = "All Fields"
             st.session_state["t1_degree"] = "All Degrees"
             st.session_state["t1_year_range"] = (year_min, year_max)
@@ -366,7 +366,7 @@ with tab1:
         )
         st.plotly_chart(fig1_4, use_container_width=True)
 
-    with st.expander("📋 View Program & Curriculum Records"):
+    with st.expander("View Program & Curriculum Records"):
         display_cols = ["program_id", "program_name", "university", "field", "degree", "year", "graduates_count", tuition_col, "employment_rate_yr1"]
         st.dataframe(filtered_supply[display_cols].sort_values(by="year", ascending=False), use_container_width=True)
 
@@ -375,7 +375,7 @@ with tab1:
 # TAB 2: Market Demand & Compensation
 # =========================================================
 with tab2:
-    st.markdown("### 💼 Labor Market Demand, In-Demand Skills & Compensation Trends")
+    st.markdown("### Labor Market Demand, In-Demand Skills & Compensation Trends")
     st.caption("Grounded in Kaggle AI Job Market Global, Global Data Science Salaries, and U.S. BLS open benchmarks.")
 
     # Tab 2 Cross-Filters
@@ -392,7 +392,7 @@ with tab2:
     with t2_c4:
         st.write("")
         st.write("")
-        if st.button("🔄 Reset Filters", key="t2_reset"):
+        if st.button("Reset Filters", key="t2_reset"):
             st.session_state["t2_ind"] = "All Industries"
             st.session_state["t2_exp"] = "All Experience Levels"
             st.session_state["t2_loc"] = "All Locations"
@@ -495,7 +495,7 @@ with tab2:
         )
         st.plotly_chart(fig2_4, use_container_width=True)
 
-    with st.expander("📋 View Open Job Vacancy Postings"):
+    with st.expander("View Open Job Vacancy Postings"):
         demand_cols = ["job_id", "company_name", "industry", "field", "job_title", "experience_level", "vacancies", sal_col, "location", "posting_date"]
         st.dataframe(filtered_demand[demand_cols].sort_values(by="posting_date", ascending=False), use_container_width=True)
 
@@ -504,7 +504,7 @@ with tab2:
 # TAB 3: Skill Mismatch & Policy Analysis
 # =========================================================
 with tab3:
-    st.markdown("### ⚖️ Supply vs. Demand Equilibrium & Skill Mismatch Diagnosis")
+    st.markdown("### Supply vs. Demand Equilibrium & Skill Mismatch Diagnosis")
     st.caption("Quantitative identification of curriculum blindspots, skill shortages, and strategic workforce interventions.")
 
     # Re-calculate mismatch based on active global/current data
@@ -610,12 +610,12 @@ with tab3:
                     <strong>Intervention:</strong> {rec['policy_action']}
                 </div>
                 <div style="color: #38BDF8; font-size: 0.82rem; font-weight: 600; margin-top: 4px;">
-                    🎯 Projected Impact: {rec['impact_reduction']}
+                    Projected Impact: {rec['impact_reduction']}
                 </div>
             </div>
             """, unsafe_allow_html=True)
 
-    with st.expander("📊 Complete Quantitative Mismatch Ledger"):
+    with st.expander("Complete Quantitative Mismatch Ledger"):
         st.dataframe(mismatch_df, use_container_width=True)
 
 # ---------------------------------------------------------
